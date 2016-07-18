@@ -13,7 +13,8 @@ module.exports = function (grunt) {
         // Task configuration.
         concat: {
             options: {
-                separator: ';\n'
+                separator: '\n',
+                banner: '<%= banner %>'
             },
             dist: {
                 src: [

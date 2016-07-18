@@ -1,4 +1,4 @@
-angular.module("leaflet-ng-core", []).directive('leaflet', ['$q', 'leafletData', function ($q, leafletData) {
+angular.module("leaflet-ng-core").directive('leaflet', ['$q', 'leafletData', function ($q, leafletData) {
     return {
         restrict: "EA",
         replace: true,
@@ -37,7 +37,6 @@ angular.module("leaflet-ng-core", []).directive('leaflet', ['$q', 'leafletData',
                 map.remove();
                 leafletData.destroy(attrs.id);
             });
-
         }
     }
 }]);

@@ -1,4 +1,10 @@
-angular.module("leaflet-ng-core", []).directive('leaflet', ['$q', 'leafletData', function ($q, leafletData) {
+/* leaflet-ng - 2016-07-18
+* https://github.com/justinwp/leaflet-ng#readme
+* Copyright (c) 2016 ;
+* Last Modified: Mon Jul 18 2016 13:41:44
+*/
+angular.module("leaflet-ng-core", []);
+angular.module("leaflet-ng-core").directive('leaflet', ['$q', 'leafletData', function ($q, leafletData) {
     return {
         restrict: "EA",
         replace: true,
@@ -37,11 +43,10 @@ angular.module("leaflet-ng-core", []).directive('leaflet', ['$q', 'leafletData',
                 map.remove();
                 leafletData.destroy(attrs.id);
             });
-
         }
     }
 }]);
-;
+
 angular.module('leaflet-ng-core').factory('leafletData', [function () {
     var _data = {};
 
@@ -87,7 +92,8 @@ angular.module('leaflet-ng-core').factory('leafletData', [function () {
     };
 
 }]);
-;
+
+angular.module('leaflet-ng-layers', ['leaflet-ng-core'])
 angular.module('leaflet-ng-layers').directive('layers', ['leafletLayers', 'leafletData', '$q', function (leafletLayers, leafletData, $q) {
     var layerTypes = leafletLayers.getAllDefinitions();
 
@@ -168,9 +174,8 @@ angular.module('leaflet-ng-layers').directive('layers', ['leafletLayers', 'leafl
         }
     };
 }]);
-;
-angular.module('leaflet-ng-layers', ['leaflet-ng-core']);
-angular.module('leaflet-ng-layers').factory('leafletLayers', ['$q', function ($q) {
+
+angular.module('leaflet-ng-layers').factory('leafletLayers', ['$log', function ($log) {
     // minimal set of pre-defined layers
     var _layers = {
         'xyz': {
