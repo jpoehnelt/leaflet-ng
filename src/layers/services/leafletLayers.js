@@ -2,11 +2,16 @@ angular.module('leaflet-ng-layers').factory('leafletLayers', ['$log', function (
     // minimal set of pre-defined layers
     var _layers = {
         'xyz': {
-            mustHaveUrl: true,
             createLayer: function (params) {
                 return L.tileLayer(params.url, params.options);
             }
+        },
+        'wms': {
+            createLayer: function (params) {
+                return L.tileLayer.wms(params.url, params.options);
+            }
         }
+
     };
 
     function set(type, definition) {
