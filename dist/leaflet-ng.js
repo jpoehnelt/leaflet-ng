@@ -1,7 +1,7 @@
 /* leaflet-ng - 2016-07-18
 * https://github.com/justinwp/leaflet-ng#readme
 * Copyright (c) 2016 ;
-* Last Modified: Mon Jul 18 2016 13:41:44
+* Last Modified: Mon Jul 18 2016 15:01:48
 */
 angular.module("leaflet-ng-core", []);
 angular.module("leaflet-ng-core").directive('leaflet', ['$q', 'leafletData', function ($q, leafletData) {
@@ -9,8 +9,8 @@ angular.module("leaflet-ng-core").directive('leaflet', ['$q', 'leafletData', fun
         restrict: "EA",
         replace: true,
         scope: {
-            defaults: '=',
-            layers: '='
+            lfDefaults: '=',
+            lfLayers: '='
         },
         transclude: true,
         template: '<div class="angular-leaflet-map"><div ng-transclude></div></div>',
@@ -27,11 +27,11 @@ angular.module("leaflet-ng-core").directive('leaflet', ['$q', 'leafletData', fun
         link: function (scope, element, attrs, ctrl) {
 
             // Create the Leaflet Map Object with the options
-            var map = new L.Map(element[0], scope.defaults);
+            var map = new L.Map(element[0], scope.lfDefaults);
             leafletData.set('map', map, attrs.id);
             ctrl._leafletMap.resolve(map);
 
-            console.log(scope.defaults);
+            console.log(scope.lfDefaults);
 
             // Resolve the map object to the promises
             map.whenReady(function () {
@@ -94,7 +94,7 @@ angular.module('leaflet-ng-core').factory('leafletData', [function () {
 }]);
 
 angular.module('leaflet-ng-layers', ['leaflet-ng-core'])
-angular.module('leaflet-ng-layers').directive('layers', ['leafletLayers', 'leafletData', '$q', function (leafletLayers, leafletData, $q) {
+angular.module('leaflet-ng-layers').directive('lfLayers', ['leafletLayers', 'leafletData', '$q', function (leafletLayers, leafletData, $q) {
     var layerTypes = leafletLayers.getAllDefinitions();
 
     return {
@@ -110,9 +110,8 @@ angular.module('leaflet-ng-layers').directive('layers', ['leafletLayers', 'leafl
         },
         link: function (scope, element, attrs, ctrl) {
             var leafletScope = ctrl.getScope(),
-                layers = leafletScope.layers;
-
-
+                layers = leafletScope.lfLayers;
+            console.log(layers);
             ctrl.getMap().then(function (map) {
                 var mapId = attrs.id;
                 scope._leafletLayers.resolve(leafletLayers);
@@ -122,16 +121,17 @@ angular.module('leaflet-ng-layers').directive('layers', ['leafletLayers', 'leafl
                 leafletLayers.baselayers = {};
                 leafletLayers.overlays = {};
 
-                leafletScope.$watch('layers.baselayers', function (newBaselayers, oldBaselayers) {
-                    console.log(newBaselayers, oldBaselayers);
+                leafletScope.$watch('lfLayers.baselayers', function (newBaselayers, oldBaselayers) {
+                    layerCompare(newBaselayers, oldBaselayers, 'baselayers');
                 }, true);
 
-                leafletScope.$watch('layers.overlays', function (newOverlays, oldOverlays) {
+                leafletScope.$watch('lfLayers.overlays', function (newOverlays, oldOverlays) {
                     layerCompare(newOverlays, oldOverlays, 'overlays');
 
                 }, true);
 
                 function layerCompare(newLayers, oldLayers, type) {
+                    console.log(newLayers, oldLayers, type);
                     angular.forEach(oldLayers, function (layer, layerName) {
                         if (!angular.isDefined(newLayers[layerName])) {
                             map.removeLayer(leafletLayers[type][layerName])
@@ -179,11 +179,16 @@ angular.module('leaflet-ng-layers').factory('leafletLayers', ['$log', function (
     // minimal set of pre-defined layers
     var _layers = {
         'xyz': {
-            mustHaveUrl: true,
             createLayer: function (params) {
                 return L.tileLayer(params.url, params.options);
             }
+        },
+        'wms': {
+            createLayer: function (params) {
+                return L.tileLayer.wms(params.url, params.options);
+            }
         }
+
     };
 
     function set(type, definition) {

@@ -1,4 +1,4 @@
-angular.module('leaflet-ng-layers').directive('layers', ['leafletLayers', 'leafletData', '$q', function (leafletLayers, leafletData, $q) {
+angular.module('leaflet-ng-layers').directive('lfLayers', ['leafletLayers', 'leafletData', '$q', function (leafletLayers, leafletData, $q) {
     var layerTypes = leafletLayers.getAllDefinitions();
 
     return {
@@ -14,9 +14,8 @@ angular.module('leaflet-ng-layers').directive('layers', ['leafletLayers', 'leafl
         },
         link: function (scope, element, attrs, ctrl) {
             var leafletScope = ctrl.getScope(),
-                layers = leafletScope.layers;
-
-
+                layers = leafletScope.lfLayers;
+            console.log(layers);
             ctrl.getMap().then(function (map) {
                 var mapId = attrs.id;
                 scope._leafletLayers.resolve(leafletLayers);
@@ -26,16 +25,17 @@ angular.module('leaflet-ng-layers').directive('layers', ['leafletLayers', 'leafl
                 leafletLayers.baselayers = {};
                 leafletLayers.overlays = {};
 
-                leafletScope.$watch('layers.baselayers', function (newBaselayers, oldBaselayers) {
-                    console.log(newBaselayers, oldBaselayers);
+                leafletScope.$watch('lfLayers.baselayers', function (newBaselayers, oldBaselayers) {
+                    layerCompare(newBaselayers, oldBaselayers, 'baselayers');
                 }, true);
 
-                leafletScope.$watch('layers.overlays', function (newOverlays, oldOverlays) {
+                leafletScope.$watch('lfLayers.overlays', function (newOverlays, oldOverlays) {
                     layerCompare(newOverlays, oldOverlays, 'overlays');
 
                 }, true);
 
                 function layerCompare(newLayers, oldLayers, type) {
+                    console.log(newLayers, oldLayers, type);
                     angular.forEach(oldLayers, function (layer, layerName) {
                         if (!angular.isDefined(newLayers[layerName])) {
                             map.removeLayer(leafletLayers[type][layerName])

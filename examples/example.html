@@ -7,16 +7,7 @@
     <script src="https://npmcdn.com/leaflet@1.0.0-rc.1/dist/leaflet.js"></script>
     <script src="../bower_components/angular/angular.min.js"></script>
 
-    <!--Core Begin-->
-    <script src="../src/core/directives/leaflet.js"></script>
-    <script src="../src/core/services/leafletData.js"></script>
-    <!--Core End-->
-
-    <!--Layers Begin-->
-    <script src="../src/layers/main.js"></script>
-    <script src="../src/layers/services/leafletLayers.js"></script>
-    <script src="../src/layers/directives/layers.js"></script>
-    <!--Layers End-->
+    <script src="../dist/leaflet-ng.js"></script>
 
     <style>
         #map {
@@ -27,7 +18,7 @@
 
 </head>
 <body ng-app="example" ng-controller="exampleCtrl">
-<leaflet id="map" defaults="defaults" layers="layers"></leaflet>
+<leaflet id="map" lf-defaults="defaults" lf-layers="layers"></leaflet>
 {{ layers }}
 
 <input type="checkbox" ng-model="layers.overlays.tiles.visible"/>

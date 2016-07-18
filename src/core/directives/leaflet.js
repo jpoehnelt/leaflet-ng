@@ -3,8 +3,8 @@ angular.module("leaflet-ng-core").directive('leaflet', ['$q', 'leafletData', fun
         restrict: "EA",
         replace: true,
         scope: {
-            defaults: '=',
-            layers: '='
+            lfDefaults: '=',
+            lfLayers: '='
         },
         transclude: true,
         template: '<div class="angular-leaflet-map"><div ng-transclude></div></div>',
@@ -21,11 +21,11 @@ angular.module("leaflet-ng-core").directive('leaflet', ['$q', 'leafletData', fun
         link: function (scope, element, attrs, ctrl) {
 
             // Create the Leaflet Map Object with the options
-            var map = new L.Map(element[0], scope.defaults);
+            var map = new L.Map(element[0], scope.lfDefaults);
             leafletData.set('map', map, attrs.id);
             ctrl._leafletMap.resolve(map);
 
-            console.log(scope.defaults);
+            console.log(scope.lfDefaults);
 
             // Resolve the map object to the promises
             map.whenReady(function () {
