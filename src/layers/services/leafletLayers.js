@@ -1,4 +1,4 @@
-angular.module('leaflet-ng-layers').factory('leafletLayers', ['$q', function ($q) {
+angular.module('leaflet-ng-layers').factory('leafletLayers', ['$log', function ($log) {
     // minimal set of pre-defined layers
     var _layers = {
         'xyz': {
