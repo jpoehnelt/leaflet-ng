@@ -1,6 +1,5 @@
-angular.module('leaflet-ng-core').factory('leafletData', ['$q', function ($q) {
+angular.module('leaflet-ng-core').factory('leafletData', [function () {
     var _data = {};
-
 
     function defaultMap(mapId) {
         if (!angular.isDefined(mapId)) {
@@ -11,25 +10,19 @@ angular.module('leaflet-ng-core').factory('leafletData', ['$q', function ($q) {
     }
 
     function set(key, obj, mapId) {
-        var q = $q.defer();
+
         mapId = defaultMap(mapId);
         if (!angular.isDefined(_data[key])) {
             _data[key] = {}
         }
         _data[key][mapId] = obj;
-        return q.promise;
     }
 
     function get(key, mapId) {
-        var q = $q.defer();
         mapId = defaultMap(mapId);
-
-        if (!angular.isDefined(_data[key]) || !angular.isDefined(_data[key][mapId])) {
-            q.reject();
-        } else {
-            q.resolve(_data[key][mapId]);
+        if (angular.isDefined(_data[key]) && angular.isDefined(_data[key][mapId])) {
+            return _data[key][mapId];
         }
-        return q.promise;
     }
 
     return {

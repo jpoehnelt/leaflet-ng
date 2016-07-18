@@ -6,10 +6,18 @@
     <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.1/dist/leaflet.css"/>
     <script src="https://npmcdn.com/leaflet@1.0.0-rc.1/dist/leaflet.js"></script>
     <script src="../bower_components/angular/angular.min.js"></script>
+
+    <!--Core Begin-->
     <script src="../src/core/directives/leaflet.js"></script>
     <script src="../src/core/services/leafletData.js"></script>
-    <script src="../src/core/services/leafletLayers.js"></script>
+    <!--Core End-->
+
+    <!--Layers Begin-->
+    <script src="../src/layers/main.js"></script>
+    <script src="../src/layers/services/leafletLayers.js"></script>
     <script src="../src/layers/directives/layers.js"></script>
+    <!--Layers End-->
+
     <style>
         #map {
             width: 100%;
@@ -23,6 +31,7 @@
 {{ layers }}
 
 <input type="checkbox" ng-model="layers.overlays.tiles.visible"/>
+<input type="text" ng-model="layers.overlays.tiles.params.options.band"/>
 
 </body>
 
@@ -41,7 +50,8 @@
                     type: 'xyz',
                     params: {
                         options: {
-                            band: 'cropland'
+                            band: 'cropland',
+                            subdomains: 'abc'
                         },
                         url: '//{s}.tiles.croplands.org/{z}/{x}/{y}/tile.png?collection=users/JustinPoehnelt/products&band={band}'
                     }
@@ -49,12 +59,8 @@
             }
         };
 
-        leafletData.getMap('map').then(function (map) {
-            console.log(map);
-        }, function () {
-            console.log('could not get map');
-        });
-
+        var map = leafletData.getMap('map');
+        console.log(map);
 
     }]);
 </script>

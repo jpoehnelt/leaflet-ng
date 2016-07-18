@@ -1,0 +1,1 @@
+angular.module('leaflet-ng-layers', ['leaflet-ng-core'])

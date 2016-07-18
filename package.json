@@ -1,0 +1,30 @@
+{
+  "name": "leaflet-ng",
+  "version": "0.0.1",
+  "description": "An attempt at a slimmer and more extensible Angular Leaflet module.",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-uglify": "^1.0.1",
+    "grunt-contrib-watch": "^1.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/justinwp/leaflet-ng.git"
+  },
+  "keywords": [
+    "leaflet",
+    "angular"
+  ],
+  "author": "Justin Poehnelt",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/justinwp/leaflet-ng/issues"
+  },
+  "homepage": "https://github.com/justinwp/leaflet-ng#readme"
+}
