@@ -14,16 +14,15 @@ angular.module('leaflet-ng-layers').directive('lfLayers', ['leafletLayers', 'lea
         },
         link: function (scope, element, attrs, ctrl) {
             var leafletScope = ctrl.getScope(),
-                layers = leafletScope.lfLayers;
-            console.log(layers);
+                layers = leafletScope.lfLayers, leafletLayers;
+
             ctrl.getMap().then(function (map) {
                 var mapId = attrs.id;
-                scope._leafletLayers.resolve(leafletLayers);
-
                 leafletLayers = leafletData.get('layers', mapId);
                 leafletLayers = angular.isDefined(leafletLayers) ? leafletLayers : {};
-                leafletLayers.baselayers = {};
-                leafletLayers.overlays = {};
+                leafletLayers.baselayers = angular.isDefined(leafletLayers.baselayers) ? leafletLayers.baselayers : {};
+                leafletLayers.overlays = angular.isDefined(leafletLayers.overlays) ? leafletLayers.overlays : {};
+                scope._leafletLayers.resolve(leafletLayers);
 
                 leafletScope.$watch('lfLayers.baselayers', function (newBaselayers, oldBaselayers) {
                     layerCompare(newBaselayers, oldBaselayers, 'baselayers');
@@ -35,7 +34,6 @@ angular.module('leaflet-ng-layers').directive('lfLayers', ['leafletLayers', 'lea
                 }, true);
 
                 function layerCompare(newLayers, oldLayers, type) {
-                    console.log(newLayers, oldLayers, type);
                     angular.forEach(oldLayers, function (layer, layerName) {
                         if (!angular.isDefined(newLayers[layerName])) {
                             map.removeLayer(leafletLayers[type][layerName])

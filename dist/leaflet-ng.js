@@ -1,16 +1,46 @@
 /* leaflet-ng - 2016-07-18
 * https://github.com/justinwp/leaflet-ng#readme
 * Copyright (c) 2016 ;
-* Last Modified: Mon Jul 18 2016 15:01:48
+* Last Modified: Mon Jul 18 2016 16:39:21
 */
 angular.module("leaflet-ng-core", []);
+angular.module("leaflet-ng-core").directive('lfCenter', ['leafletHelpers', function (leafletHelpers) {
+    return {
+        restrict: "A",
+        scope: false,
+        replace: false,
+        require: 'leaflet',
+        link: function (scope, element, attrs, ctrl) {
+            var leafletScope = ctrl.getScope(), safeApply = leafletHelpers.safeApply;
+
+            ctrl.getMap().then(function (map) {
+                leafletScope.$watch('lfCenter', function (center) {
+                    map.setView([center.lat, center.lng], center.zoom);
+                }, true);
+
+                map.on('moveend', function (/* event */) {
+                    safeApply(scope, function () {
+                        angular.extend(leafletScope.lfCenter, {
+                            lat: map.getCenter().lat,
+                            lng: map.getCenter().lng,
+                            zoom: map.getZoom(),
+                            autoDiscover: false
+                        });
+                    });
+                });
+            });
+        }
+    }
+}]);
+
 angular.module("leaflet-ng-core").directive('leaflet', ['$q', 'leafletData', function ($q, leafletData) {
     return {
         restrict: "EA",
         replace: true,
         scope: {
             lfDefaults: '=',
-            lfLayers: '='
+            lfLayers: '=',
+            lfCenter: '='
         },
         transclude: true,
         template: '<div class="angular-leaflet-map"><div ng-transclude></div></div>',
@@ -93,6 +123,21 @@ angular.module('leaflet-ng-core').factory('leafletData', [function () {
 
 }]);
 
+angular.module('leaflet-ng-core').factory('leafletHelpers', [function () {
+
+    return {
+        safeApply: function safeApply($scope, fn) {
+            var phase = $scope.$root.$$phase;
+            if (phase === '$apply' || phase === '$digest') {
+                $scope.$eval(fn);
+            } else {
+                $scope.$evalAsync(fn);
+            }
+        }
+    };
+
+}]);
+
 angular.module('leaflet-ng-layers', ['leaflet-ng-core'])
 angular.module('leaflet-ng-layers').directive('lfLayers', ['leafletLayers', 'leafletData', '$q', function (leafletLayers, leafletData, $q) {
     var layerTypes = leafletLayers.getAllDefinitions();
@@ -110,16 +155,15 @@ angular.module('leaflet-ng-layers').directive('lfLayers', ['leafletLayers', 'lea
         },
         link: function (scope, element, attrs, ctrl) {
             var leafletScope = ctrl.getScope(),
-                layers = leafletScope.lfLayers;
-            console.log(layers);
+                layers = leafletScope.lfLayers, leafletLayers;
+
             ctrl.getMap().then(function (map) {
                 var mapId = attrs.id;
-                scope._leafletLayers.resolve(leafletLayers);
-
                 leafletLayers = leafletData.get('layers', mapId);
                 leafletLayers = angular.isDefined(leafletLayers) ? leafletLayers : {};
-                leafletLayers.baselayers = {};
-                leafletLayers.overlays = {};
+                leafletLayers.baselayers = angular.isDefined(leafletLayers.baselayers) ? leafletLayers.baselayers : {};
+                leafletLayers.overlays = angular.isDefined(leafletLayers.overlays) ? leafletLayers.overlays : {};
+                scope._leafletLayers.resolve(leafletLayers);
 
                 leafletScope.$watch('lfLayers.baselayers', function (newBaselayers, oldBaselayers) {
                     layerCompare(newBaselayers, oldBaselayers, 'baselayers');
@@ -131,7 +175,6 @@ angular.module('leaflet-ng-layers').directive('lfLayers', ['leafletLayers', 'lea
                 }, true);
 
                 function layerCompare(newLayers, oldLayers, type) {
-                    console.log(newLayers, oldLayers, type);
                     angular.forEach(oldLayers, function (layer, layerName) {
                         if (!angular.isDefined(newLayers[layerName])) {
                             map.removeLayer(leafletLayers[type][layerName])

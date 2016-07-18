@@ -18,20 +18,28 @@
 
 </head>
 <body ng-app="example" ng-controller="exampleCtrl">
-<leaflet id="map" lf-defaults="defaults" lf-layers="layers"></leaflet>
+<leaflet id="map" lf-center="center" lf-defaults="defaults" lf-layers="layers"></leaflet>
 {{ layers }}
-
+{{ center }}
 <input type="checkbox" ng-model="layers.overlays.tiles.visible"/>
 <input type="text" ng-model="layers.overlays.tiles.params.options.band"/>
+
+<input type="number" ng-model="center.lat"/>
+<input type="number" ng-model="center.lng"/>
+<input type="number" ng-model="center.zoom"/>
 
 </body>
 
 <script>
     angular.module('example', ['leaflet-ng-core', 'leaflet-ng-layers']).controller('exampleCtrl', ['$scope', 'leafletData', '$timeout', function ($scope, leafletData, $timeout) {
         $scope.defaults = {
-            center: [51.505, -0.09],
-            zoom: 13,
             layers: [L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18, visible: true})]
+        };
+
+        $scope.center = {
+            lat: 0,
+            lng: 0,
+            zoom: 3
         };
 
         $scope.layers = {
