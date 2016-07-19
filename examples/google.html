@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.1/dist/leaflet.css"/>
+    <script src="https://npmcdn.com/leaflet@1.0.0-rc.1/dist/leaflet.js"></script>
+    <script src="//maps.googleapis.com/maps/api/js"></script>
+    <script src="../bower_components/angular/angular.min.js"></script>
+    <script src="../bower_components/leaflet-plugins/layer/tile/Google.js"></script>
+    <script src="../dist/leaflet-ng.js"></script>
+
+    <style>
+        #map {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+
+</head>
+<body ng-app="example" ng-controller="exampleCtrl">
+<leaflet id="map" lf-center="center" lf-defaults="defaults" lf-layers="layers"></leaflet>
+{{ layers }}
+{{ center }}
+<input type="checkbox" ng-model="layers.overlays.tiles.visible"/>
+<input type="text" ng-model="layers.overlays.tiles.params.options.band"/>
+
+<input type="number" ng-model="center.lat"/>
+<input type="number" ng-model="center.lng"/>
+<input type="number" ng-model="center.zoom"/>
+
+</body>
+
+<script>
+
+    angular.module('example', ['leaflet-ng-core', 'leaflet-ng-layers']).controller('exampleCtrl', ['$scope', 'leafletData', 'leafletLayers', function ($scope, leafletData, leafletLayers) {
+
+        leafletLayers.set('google', {
+            createLayer: function (params) {
+                var type;
+                type = params.type || 'SATELLITE';
+
+                return new L.Google(type, params.options);
+            }
+        });
+
+        $scope.center = {
+            lat: 0,
+            lng: 0,
+            zoom: 3
+        };
+
+        $scope.layers = {
+            baselayers: {
+                google: {
+                    name: 'Satellite',
+                    params: {
+                        type: 'HYBRID'
+                    },
+                    type: 'google',
+                    visible: true
+                }
+            },
+            overlays: {
+                tiles: {
+                    visible: true,
+                    type: 'xyz',
+                    params: {
+                        options: {
+                            band: 'cropland',
+                            subdomains: 'abc'
+                        },
+                        url: '//{s}.tiles.croplands.org/{z}/{x}/{y}/tile.png?collection=users/JustinPoehnelt/products&band={band}'
+                    }
+                }
+            }
+        };
+
+        var map = leafletData.getMap('map');
+        console.log(map);
+
+    }]);
+</script>
+
+</html>

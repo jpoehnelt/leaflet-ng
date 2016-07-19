@@ -15,6 +15,10 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "^1.5.7"
+    "angular": "^1.5.7",
+    "leaflet-plugins": "https://github.com/shramov/leaflet-plugins.git#leaflet_one"
+  },
+  "resolutions": {
+    "leaflet-plugins": "leaflet_one"
   }
 }
