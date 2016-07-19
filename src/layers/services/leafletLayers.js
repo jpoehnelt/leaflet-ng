@@ -28,9 +28,9 @@ angular.module('leaflet-ng-layers').factory('leafletLayers', ['$log', function (
     }
 
     return {
-        setDefinitions: set,
-        getDefinitions: get,
-        getAllDefinitions: function () {
+        set: set,
+        get: get,
+        getAll: function () {
             return _layers;
         }
     };
