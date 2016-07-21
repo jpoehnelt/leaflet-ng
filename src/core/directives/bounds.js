@@ -12,7 +12,7 @@ angular.module("leaflet-ng-core").directive('lfBounds', ['leafletHelpers', funct
                 map.on('moveend', function () {
                     var bounds = map.getBounds();
 
-                    safeApply(function () {
+                    safeApply(leafletScope, function () {
                         leafletScope.lfBounds = {
                             northEast: {
                                 lng: bounds.getEast(),
