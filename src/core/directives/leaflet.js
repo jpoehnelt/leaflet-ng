@@ -5,7 +5,8 @@ angular.module("leaflet-ng-core").directive('leaflet', ['$q', 'leafletData', fun
         scope: {
             lfDefaults: '=',
             lfLayers: '=',
-            lfCenter: '='
+            lfCenter: '=',
+            lfMarkers: '='
         },
         transclude: true,
         template: '<div class="angular-leaflet-map"><div ng-transclude></div></div>',

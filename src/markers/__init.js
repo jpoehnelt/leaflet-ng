@@ -1,0 +1,1 @@
+angular.module('leaflet-ng-markers', ['leaflet-ng-core']);
