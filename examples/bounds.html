@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.1/dist/leaflet.css"/>
+    <script src="https://npmcdn.com/leaflet@1.0.0-rc.1/dist/leaflet.js"></script>
+    <script src="../bower_components/angular/angular.min.js"></script>
+
+    <script src="../dist/leaflet-ng.js"></script>
+
+    <style>
+        #map {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+
+</head>
+<body ng-app="example" ng-controller="exampleCtrl">
+<leaflet id="map" lf-center="center" lf-bounds="bounds" lf-defaults="defaults" lf-layers="layers"></leaflet>
+{{ bounds }}
+</body>
+
+<script>
+    angular.module('example', ['leaflet-ng-core', 'leaflet-ng-layers']).controller('exampleCtrl', ['$scope', 'leafletData', '$timeout', function ($scope, leafletData, $timeout) {
+        $scope.defaults = {
+            layers: [L.tileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18, visible: true})]
+        };
+
+        $scope.center = {
+            lat: 0,
+            lng: 0,
+            zoom: 3
+        };
+
+        $scope.layers = {
+            overlays: {
+                tiles: {
+                    visible: true,
+                    type: 'xyz',
+                    params: {
+                        options: {
+                            band: 'cropland',
+                            subdomains: 'abc'
+                        },
+                        url: '//{s}.tiles.croplands.org/{z}/{x}/{y}/tile.png?collection=users/JustinPoehnelt/products&band={band}'
+                    }
+                }
+            }
+        };
+
+        var map = leafletData.getMap('map');
+        console.log(map);
+
+    }]);
+</script>
+
+</html>
