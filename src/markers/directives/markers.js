@@ -23,7 +23,7 @@ angular.module('leaflet-ng-markers').directive('lfMarkers', ['leafletData', '$q'
                 leafletScope.$watch('lfMarkers', function (newMarkers, oldMarkers) {
                     angular.forEach(leafletMarkers, function (m, key) {
                         if (!angular.isDefined(newMarkers[key])) {
-                            map.remove(m);
+                            map.removeLayer(m);
                             delete leafletMarkers[key];
                         }
                     });
