@@ -42,7 +42,6 @@ angular.module('leaflet-ng-layers').directive('lfLayers', ['leafletLayers', 'lea
 
                     // modify or add other layers
                     angular.forEach(newLayers, function (layer, layerName) {
-                        console.log(layer, layerName)
                         var leafletLayer;
                         // create layer if it does not exist
                         if (!angular.isDefined(leafletLayers[type][layerName])) {
@@ -61,7 +60,6 @@ angular.module('leaflet-ng-layers').directive('lfLayers', ['leafletLayers', 'lea
                                 leafletLayer.redraw();
                             }
                         }
-                        console.log('leafletLayer', leafletLayer, leafletLayer._leaflet_id);
 
                         if (layer.visible) {
                             map.addLayer(leafletLayer);
