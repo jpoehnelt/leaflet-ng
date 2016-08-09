@@ -29,16 +29,16 @@ angular.module('leaflet-ng-markers').directive('lfMarkers', ['leafletData', '$q'
                     });
 
                     angular.forEach(newMarkers, function (params, key) {
-                        var latLng = L.latLng([params.lat, params.lng]);
+                        var latLng = L.latLng([params.lat, params.lng]), m;
 
                         if (!angular.isDefined(leafletMarkers[key])) {
-                            var m = L.marker(latLng, params.options).addTo(map);
+                            m = L.marker(latLng, params.options).addTo(map);
                             map.addLayer(m);
                             leafletMarkers[key] = m;
                         } else {
                             m = leafletMarkers[key];
                             m.setLatLng(latLng);
-                            m.options = params.options;
+                            angular.extend(m.options, params.options);
                             m.update();
                         }
                     });
