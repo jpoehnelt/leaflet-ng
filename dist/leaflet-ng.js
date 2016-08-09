@@ -1,9 +1,40 @@
-/* leaflet-ng - 2016-07-21
+/* leaflet-ng - 2016-08-09
 * https://github.com/justinwp/leaflet-ng#readme
 * Copyright (c) 2016 ;
-* Last Modified: Thu Jul 21 2016 09:53:53
+* Last Modified: Tue Aug 09 2016 10:20:40
 */
 angular.module("leaflet-ng-core", []);
+angular.module("leaflet-ng-core").directive('lfBounds', ['leafletHelpers', function (leafletHelpers) {
+    return {
+        restrict: "A",
+        scope: false,
+        replace: false,
+        require: 'leaflet',
+        link: function (scope, element, attrs, ctrl) {
+            var leafletScope = ctrl.getScope(), safeApply = leafletHelpers.safeApply;
+
+            ctrl.getMap().then(function (map) {
+
+                map.on('moveend', function () {
+                    var bounds = map.getBounds();
+
+                    safeApply(leafletScope, function () {
+                        leafletScope.lfBounds = {
+                            northEast: {
+                                lng: bounds.getEast(),
+                                lat: bounds.getNorth()
+                            },
+                            southWest: {
+                                lng: bounds.getWest(),
+                                lat: bounds.getSouth()
+                            }
+                        };
+                    });
+                });
+            });
+        }
+    }
+}]);
 angular.module("leaflet-ng-core").directive('lfCenter', ['leafletHelpers', function (leafletHelpers) {
     return {
         restrict: "A",
@@ -41,7 +72,9 @@ angular.module("leaflet-ng-core").directive('leaflet', ['$q', 'leafletData', fun
             lfDefaults: '=',
             lfLayers: '=',
             lfCenter: '=',
-            lfMarkers: '='
+            lfMarkers: '=',
+            lfBounds: '=',
+            lfEvents: '='
         },
         transclude: true,
         template: '<div class="angular-leaflet-map"><div ng-transclude></div></div>',
@@ -62,12 +95,17 @@ angular.module("leaflet-ng-core").directive('leaflet', ['$q', 'leafletData', fun
             leafletData.set('map', map, attrs.id);
             ctrl._leafletMap.resolve(map);
 
-            console.log(scope.lfDefaults);
-
             // Resolve the map object to the promises
             map.whenReady(function () {
                 console.log('map ready');
                 leafletData.set('map', map, attrs.id);
+
+                // add events
+                angular.forEach(scope.lfEvents, function (f, event) {
+                    console.log(event);
+                    map.on(event, f);
+                })
+
             });
 
             scope.$on('$destroy', function () {
@@ -184,7 +222,6 @@ angular.module('leaflet-ng-layers').directive('lfLayers', ['leafletLayers', 'lea
 
                     // modify or add other layers
                     angular.forEach(newLayers, function (layer, layerName) {
-                        console.log(layer, layerName)
                         var leafletLayer;
                         // create layer if it does not exist
                         if (!angular.isDefined(leafletLayers[type][layerName])) {
@@ -203,7 +240,6 @@ angular.module('leaflet-ng-layers').directive('lfLayers', ['leafletLayers', 'lea
                                 leafletLayer.redraw();
                             }
                         }
-                        console.log('leafletLayer', leafletLayer, leafletLayer._leaflet_id);
 
                         if (layer.visible) {
                             map.addLayer(leafletLayer);
@@ -286,22 +322,22 @@ angular.module('leaflet-ng-markers').directive('lfMarkers', ['leafletData', '$q'
                 leafletScope.$watch('lfMarkers', function (newMarkers, oldMarkers) {
                     angular.forEach(leafletMarkers, function (m, key) {
                         if (!angular.isDefined(newMarkers[key])) {
-                            map.remove(m);
+                            map.removeLayer(m);
                             delete leafletMarkers[key];
                         }
                     });
 
                     angular.forEach(newMarkers, function (params, key) {
-                        var latLng = L.latLng([params.lat, params.lng]);
+                        var latLng = L.latLng([params.lat, params.lng]), m;
 
                         if (!angular.isDefined(leafletMarkers[key])) {
-                            var m = L.marker(latLng, params.options).addTo(map);
+                            m = L.marker(latLng, params.options).addTo(map);
                             map.addLayer(m);
                             leafletMarkers[key] = m;
                         } else {
                             m = leafletMarkers[key];
                             m.setLatLng(latLng);
-                            m.options = params.options;
+                            angular.extend(m.options, params.options);
                             m.update();
                         }
                     });
