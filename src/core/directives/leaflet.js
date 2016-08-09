@@ -7,7 +7,8 @@ angular.module("leaflet-ng-core").directive('leaflet', ['$q', 'leafletData', fun
             lfLayers: '=',
             lfCenter: '=',
             lfMarkers: '=',
-            lfBounds: '='
+            lfBounds: '=',
+            lfEvents: '='
         },
         transclude: true,
         template: '<div class="angular-leaflet-map"><div ng-transclude></div></div>',
@@ -28,12 +29,17 @@ angular.module("leaflet-ng-core").directive('leaflet', ['$q', 'leafletData', fun
             leafletData.set('map', map, attrs.id);
             ctrl._leafletMap.resolve(map);
 
-            console.log(scope.lfDefaults);
-
             // Resolve the map object to the promises
             map.whenReady(function () {
                 console.log('map ready');
                 leafletData.set('map', map, attrs.id);
+
+                // add events
+                angular.forEach(scope.lfEvents, function (f, event) {
+                    console.log(event);
+                    map.on(event, f);
+                })
+
             });
 
             scope.$on('$destroy', function () {

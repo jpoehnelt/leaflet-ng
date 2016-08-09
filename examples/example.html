@@ -18,9 +18,10 @@
 
 </head>
 <body ng-app="example" ng-controller="exampleCtrl">
-<leaflet id="map" lf-center="center" lf-defaults="defaults" lf-layers="layers"></leaflet>
+<leaflet id="map" lf-center="center" lf-defaults="defaults" lf-layers="layers" lf-events="events"></leaflet>
 {{ layers }}
 {{ center }}
+{{ events }}
 <input type="checkbox" ng-model="layers.overlays.tiles.visible"/>
 <input type="text" ng-model="layers.overlays.tiles.params.options.band"/>
 
@@ -55,6 +56,12 @@
                         url: '//{s}.tiles.croplands.org/{z}/{x}/{y}/tile.png?collection=users/JustinPoehnelt/products&band={band}'
                     }
                 }
+            }
+        };
+
+        $scope.events = {
+            'click': function(e) {
+                console.log(e);
             }
         };
 
